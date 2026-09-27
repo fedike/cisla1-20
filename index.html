@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Čísla 1 až 20</title>
+<style>
+:root {
+  --sirka-bunky: clamp(56px, 7.6vw, 160px);
+  --vyska-bunky: clamp(56px, 15.5vh, 180px);
+  --sirka-karty: clamp(66px, 8.8vw, 180px);
+  --vyska-karty: clamp(66px, 16vh, 185px);
+  --velkost-cisla: clamp(30px, 8vh, 92px);
+  --modra: #14365c;
+  --zelena: #1a7f37;
+  --cervena: #d92140;
+  --oranzova: #e58e1a;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  background: #eef4f9;
+  color: #111;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2vh 1vw;
+}
+h1 {
+  color: var(--modra);
+  font-size: clamp(22px, 4.6vh, 46px);
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-align: center;
+  margin-bottom: 3vh;
+}
+#tabla {
+  display: grid;
+  grid-template-columns: repeat(10, var(--sirka-bunky));
+  grid-template-rows: repeat(2, var(--vyska-bunky));
+  gap: clamp(4px, .7vh, 8px);
+  margin-bottom: 4vh;
+}
+.bunka {
+  background: #fff;
+  border: 4px solid var(--modra);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--velkost-cisla);
+  font-weight: 800;
+  line-height: 1;
+}
+.bunka.spravne { color: var(--zelena); border-color: var(--zelena); }
+.bunka.chybne { color: var(--cervena); border-color: var(--cervena); }
+.bunka.nad { background: #fff3bf; }
+#ponuka {
+  display: grid;
+  grid-template-columns: repeat(6, var(--sirka-karty));
+  grid-template-rows: repeat(2, var(--vyska-karty));
+  gap: clamp(8px, 2vh, 22px) clamp(10px, 1.6vw, 26px);
+}
+#ponuka[hidden] { display: none; }
+.karta {
+  background: #fff;
+  border: 4px solid var(--oranzova);
+  border-radius: 14px;
+  box-shadow: 0 3px 8px rgba(20, 54, 92, .18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--velkost-cisla);
+  font-weight: 800;
+  line-height: 1;
+  color: #111;
+  touch-action: none;
+  cursor: grab;
+}
+.karta.vybrata {
+  background: #ffefc2;
+  border-color: var(--modra);
+  outline: 4px solid var(--oranzova);
+  transform: scale(1.07);
+}
+.karta.taha { visibility: hidden; }
+.karta.blok { opacity: .3; pointer-events: none; cursor: default; }
+.karta.cervena { color: var(--cervena); }
+.duch {
+  position: fixed;
+  z-index: 1000;
+  width: var(--sirka-karty);
+  height: var(--vyska-karty);
+  margin: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%) rotate(2.5deg) scale(1.08);
+  box-shadow: 0 12px 26px rgba(20, 54, 92, .35);
+  cursor: grabbing;
+}
+#hotovo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.4vh;
+}
+#hotovo[hidden] { display: none; }
+.smajlik {
+  width: clamp(90px, 22vh, 250px);
+  height: auto;
+  animation: skok .7s ease-in-out infinite alternate;
+}
+@keyframes skok {
+  from { transform: scale(1); }
+  to { transform: scale(1.12); }
+}
+#znova {
+  font-family: inherit;
+  font-size: clamp(24px, 4.4vh, 44px);
+  font-weight: 800;
+  letter-spacing: .05em;
+  color: #fff;
+  background: var(--zelena);
+  border: none;
+  border-radius: 16px;
+  padding: 1.6vh 4vw;
+  cursor: pointer;
+  box-shadow: 0 5px 0 #0e5c26;
+}
+#znova:active { transform: translateY(4px); box-shadow: 0 1px 0 #0e5c26; }
+</style>
+</head>
+<body>
+
+<h1>DOPLŇ ČÍSLA NA SPRÁVNE MIESTO.</h1>
+
+<div id="tabla" aria-label="Tabuľka čísel 1 až 20"></div>
+
+<div id="ponuka"></div>
+
+<div id="hotovo" hidden>
+  <svg class="smajlik" viewBox="0 0 100 100" aria-hidden="true">
+    <circle cx="50" cy="50" r="46" fill="#ffd93b" stroke="#e8a800" stroke-width="4"/>
+    <circle cx="34" cy="40" r="6.5" fill="#4a3000"/>
+    <circle cx="66" cy="40" r="6.5" fill="#4a3000"/>
+    <circle cx="23" cy="53" r="5.5" fill="#ff9d76" opacity=".85"/>
+    <circle cx="77" cy="53" r="5.5" fill="#ff9d76" opacity=".85"/>
+    <path d="M27 57 Q50 82 73 57" stroke="#4a3000" stroke-width="7" fill="none" stroke-linecap="round"/>
+  </svg>
+  <button id="znova" type="button">SKÚSIŤ ZNOVA?</button>
+</div>
+
+<script>
+(() => {
+  'use strict';
+
+  const tabla = document.getElementById('tabla');
+  const ponuka = document.getElementById('ponuka');
+  const hotovo = document.getElementById('hotovo');
+
+  const PRAH_TAHA = 8;    // px – rozlíši ťuknutie od ťahania
+  const CHYBA_MS = 2000;  // ako dlho svieti červené číslo v bunke
+
+  let hraId = 0;          // ochrana proti časovačom z predchádzajúcej hry
+  let pocetSpravnych = 0;
+  let vybrataKarta = null; // kartička vybraná ťuknutím
+  let tahanie = null;      // prebiehajúce ťahanie
+  let podsvietena = null;  // prázdna bunka zvýraznená počas ťahania
+
+  function zamiesaj(pole) {
+    for (let i = pole.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pole[i], pole[j]] = [pole[j], pole[i]];
+    }
+    return pole;
+  }
+
+  function novaHra() {
+    hraId++;
+    pocetSpravnych = 0;
+    odznac();
+
+    // 4 rôzne stĺpce pre horný riadok, 4 iné pre dolný – čísla X a X+10 nikdy spolu
+    const stlpce = zamiesaj([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    const predvyplnene = new Set();
+    for (let i = 0; i < 4; i++) predvyplnene.add(stlpce[i] + 1);
+    for (let i = 4; i < 8; i++) predvyplnene.add(stlpce[i] + 11);
+
+    tabla.innerHTML = '';
+    for (let cislo = 1; cislo <= 20; cislo++) {
+      const bunka = document.createElement('div');
+      bunka.className = 'bunka';
+      bunka.dataset.cislo = cislo;
+      if (predvyplnene.has(cislo)) {
+        bunka.dataset.stav = 'predvyplnena';
+        bunka.textContent = cislo;
+      } else {
+        bunka.dataset.stav = 'prazdna';
+        bunka.addEventListener('pointerdown', naBunkuStlac);
+      }
+      tabla.appendChild(bunka);
+    }
+
+    ponuka.innerHTML = '';
+    const chybajuce = [];
+    for (let cislo = 1; cislo <= 20; cislo++) {
+      if (!predvyplnene.has(cislo)) chybajuce.push(cislo);
+    }
+    zamiesaj(chybajuce);
+    for (const cislo of chybajuce) ponuka.appendChild(vytvorKartu(cislo));
+
+    hotovo.hidden = true;
+    ponuka.hidden = false;
+  }
+
+  function vytvorKartu(cislo) {
+    const karta = document.createElement('div');
+    karta.className = 'karta';
+    karta.dataset.cislo = cislo;
+    karta.textContent = cislo;
+    karta.addEventListener('pointerdown', naKartuStlac);
+    karta.addEventListener('pointermove', naKartuPohyb);
+    karta.addEventListener('pointerup', naKartuPusti);
+    karta.addEventListener('pointercancel', naKartuZrus);
+    return karta;
+  }
+
+  function naKartuStlac(e) {
+    if (tahanie) return; // druhý prst alebo ďalšia myš počas ťahania ignoruj
+    e.preventDefault();
+    try { e.currentTarget.setPointerCapture(e.pointerId); } catch (chyba) {}
+    tahanie = {
+      karta: e.currentTarget,
+      cislo: +e.currentTarget.dataset.cislo,
+      id: e.pointerId,
+      x0: e.clientX,
+      y0: e.clientY,
+      duch: null
+    };
+  }
+
+  function naKartuPohyb(e) {
+    if (!tahanie || e.pointerId !== tahanie.id) return;
+    if (!tahanie.duch) {
+      if (Math.hypot(e.clientX - tahanie.x0, e.clientY - tahanie.y0) < PRAH_TAHA) return;
+      const duch = tahanie.karta.cloneNode(true);
+      duch.classList.remove('vybrata');
+      duch.classList.add('duch');
+      duch.style.left = e.clientX + 'px';
+      duch.style.top = e.clientY + 'px';
+      document.body.appendChild(duch);
+      tahanie.duch = duch;
+      tahanie.karta.classList.add('taha');
+    }
+    tahanie.duch.style.left = e.clientX + 'px';
+    tahanie.duch.style.top = e.clientY + 'px';
+    podsvieti(bunkaNa(e.clientX, e.clientY));
+  }
+
+  function naKartuPusti(e) {
+    if (!tahanie || e.pointerId !== tahanie.id) return;
+    const t = tahanie;
+    tahanie = null;
+    podsvieti(null);
+    if (t.duch) {
+      t.duch.remove();
+      t.karta.classList.remove('taha');
+      const bunka = bunkaNa(e.clientX, e.clientY);
+      if (bunka) umiestni(t.cislo, t.karta, bunka); // mimo tabuľky = kartička sa len vráti
+    } else {
+      prepnVyber(t.karta); // ťuknutie na kartičku
+    }
+  }
+
+  function naKartuZrus(e) {
+    if (!tahanie || e.pointerId !== tahanie.id) return;
+    const t = tahanie;
+    tahanie = null;
+    podsvieti(null);
+    if (t.duch) t.duch.remove();
+    t.karta.classList.remove('taha');
+  }
+
+  function naBunkuStlac(e) {
+    if (tahanie || !vybrataKarta) return;
+    umiestni(+vybrataKarta.dataset.cislo, vybrataKarta, e.currentTarget);
+  }
+
+  function umiestni(cislo, karta, bunka) {
+    if (!karta.isConnected || bunka.dataset.stav !== 'prazdna') return;
+    const mojeHra = hraId;
+    if (+bunka.dataset.cislo === cislo) {
+      bunka.dataset.stav = 'spravna';
+      bunka.textContent = cislo;
+      bunka.classList.add('spravne');
+      if (vybrataKarta === karta) vybrataKarta = null;
+      karta.remove();
+      pocetSpravnych++;
+      if (pocetSpravnych === 12) {
+        ponuka.hidden = true;
+        hotovo.hidden = false;
+      }
+    } else {
+      bunka.dataset.stav = 'chybna';
+      bunka.textContent = cislo;
+      bunka.classList.add('chybne');
+      karta.classList.add('blok', 'cervena');
+      setTimeout(() => {
+        if (mojeHra !== hraId) return;
+        bunka.dataset.stav = 'prazdna';
+        bunka.textContent = '';
+        bunka.classList.remove('chybne');
+        karta.classList.remove('blok'); // červené číslo na kartičke zostáva
+      }, CHYBA_MS);
+    }
+    odznac();
+  }
+
+  function prepnVyber(karta) {
+    if (vybrataKarta === karta) {
+      odznac();
+    } else {
+      odznac();
+      vybrataKarta = karta;
+      karta.classList.add('vybrata');
+    }
+  }
+
+  function odznac() {
+    if (vybrataKarta) vybrataKarta.classList.remove('vybrata');
+    vybrataKarta = null;
+  }
+
+  function bunkaNa(x, y) {
+    const el = document.elementFromPoint(x, y);
+    return el ? el.closest('.bunka') : null;
+  }
+
+  function podsvieti(bunka) {
+    if (podsvietena === bunka) return;
+    if (podsvietena) podsvietena.classList.remove('nad');
+    podsvietena = bunka && bunka.dataset.stav === 'prazdna' ? bunka : null;
+    if (podsvietena) podsvietena.classList.add('nad');
+  }
+
+  document.addEventListener('contextmenu', e => e.preventDefault());
+  document.getElementById('znova').addEventListener('click', novaHra);
+  novaHra();
+})();
+</script>
+</body>
+</html>
